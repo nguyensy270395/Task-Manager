@@ -19,6 +19,7 @@
 		0289F69D282901B8004C3D99 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289F69C282901B8004C3D99 /* Home.swift */; };
 		0289F6A0282907E0004C3D99 /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289F69F282907E0004C3D99 /* TaskViewModel.swift */; };
 		0289F6A228292132004C3D99 /* AddNewTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289F6A128292132004C3D99 /* AddNewTask.swift */; };
+		02CFF63B282B4D9F001785FB /* DynamicFilteredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF63A282B4D9F001785FB /* DynamicFilteredView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,7 @@
 		0289F69C282901B8004C3D99 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		0289F69F282907E0004C3D99 /* TaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewModel.swift; sourceTree = "<group>"; };
 		0289F6A128292132004C3D99 /* AddNewTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTask.swift; sourceTree = "<group>"; };
+		02CFF63A282B4D9F001785FB /* DynamicFilteredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicFilteredView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 				0289F6742828FF3B004C3D99 /* Persistence.swift */,
 				0289F6762828FF3B004C3D99 /* Task_Manager.xcdatamodeld */,
 				0289F6712828FF3B004C3D99 /* Preview Content */,
+				02CFF63A282B4D9F001785FB /* DynamicFilteredView.swift */,
 			);
 			path = "Task Manager";
 			sourceTree = "<group>";
@@ -291,6 +294,7 @@
 				0289F6752828FF3B004C3D99 /* Persistence.swift in Sources */,
 				0289F6A0282907E0004C3D99 /* TaskViewModel.swift in Sources */,
 				0289F66E2828FF37004C3D99 /* ContentView.swift in Sources */,
+				02CFF63B282B4D9F001785FB /* DynamicFilteredView.swift in Sources */,
 				0289F69D282901B8004C3D99 /* Home.swift in Sources */,
 				0289F6782828FF3B004C3D99 /* Task_Manager.xcdatamodeld in Sources */,
 				0289F66C2828FF37004C3D99 /* Task_ManagerApp.swift in Sources */,

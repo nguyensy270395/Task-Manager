@@ -10,7 +10,7 @@ import SwiftUI
 struct Home: View {
     @StateObject var taskViewModel: TaskViewModel = .init()
     @Namespace var animation
-    @FetchRequest(entity: Task.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Task.deadline, ascending: false)], predicate: nil, animation: .easeInOut) var tasks: FetchedResults<Task>
+    //    @FetchRequest(entity: Task.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Task.deadline, ascending: false)], predicate: nil, animation: .easeInOut) var tasks: FetchedResults<Task>
     @Environment(\.self) var env
     var body: some View {
         ScrollView(.vertical, showsIndicators: false){
@@ -70,9 +70,10 @@ struct Home: View {
     @ViewBuilder
     func TaskView() -> some View{
         LazyVStack(spacing: 20){
-            ForEach(tasks) { task in
-                
+            DynamicFilteredView(currentTab: taskViewModel.currentTab) { (task: Task) in
                 TaskRowView(task: task)
+                
+                
             }
         }
         .padding(.top, 20)
@@ -80,69 +81,85 @@ struct Home: View {
     
     @ViewBuilder
     func TaskRowView(task: Task) -> some View {
-        VStack(alignment: .leading, spacing: 10){
-            HStack{
-                Text(task.type ?? "")
-                    .font(.callout)
-                    .padding(.vertical, 5)
-                    .padding(.horizontal)
-                    .background{
-                        Capsule()
-                            .fill(.white.opacity(0.3))
-                    }
-                Spacer()
-                
-                if !task.isCompleted{
-                    Button{
-                        taskViewModel.editTask = task
-                        taskViewModel.openEditTask = true
-                        taskViewModel.setupTask()
-                    } label: {
-                        Image(systemName: "square.and.pencil")
-                            .foregroundColor(.black)
-                    }
-                }
-            }
-            
-            Text(task.title ?? "")
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.black)
-                .padding(.vertical, 10)
-            HStack(alignment: .bottom, spacing: 0){
-                VStack(alignment: .leading, spacing: 10) {
-                    Label {
-                        Text(((task.deadline ?? Date()).formatted(date: .long, time: .omitted)))
-                    } icon: {
-                        Image(systemName: "calendar")
-                    }
-                    .font(.caption)
+  
+            VStack(alignment: .leading, spacing: 10){
+                HStack{
+                    Text(task.type ?? "")
+                        .font(.callout)
+                        .padding(.vertical, 5)
+                        .padding(.horizontal)
+                        .background{
+                            Capsule()
+                                .fill(.white.opacity(0.3))
+                        }
+                    Spacer()
                     
-                    Label {
-                        Text(((task.deadline ?? Date()).formatted(date: .omitted, time: .shortened)))
-                    } icon: {
-                        Image(systemName: "calendar")
+                    if !task.isCompleted && taskViewModel.currentTab != "Task Done"{
+                        Button{
+                            taskViewModel.editTask = task
+                            taskViewModel.openEditTask = true
+                            taskViewModel.setupTask()
+                        } label: {
+                            Image(systemName: "square.and.pencil")
+                                .foregroundColor(.black)
+                        }
+                    } else {
+                        if !task.isCompleted {
+                        Text("Miss")
+                            .font(.system(size: 13))
+                            .fontWeight(.semibold)
+                            .foregroundColor(.red)
+                            .padding(13)
+                            .background{
+                                Circle()
+                                    .strokeBorder(.red)
+                            }
+                            .rotationEffect(.degrees(20))
+                        }
                     }
-                    .font(.caption)
-                }.frame(maxWidth: .infinity, alignment: .leading)
-                if !task.isCompleted{
-                    Button {
-                        task.isCompleted.toggle()
-                        try? env.managedObjectContext.save()
-                    } label: {
-                        Circle()
-                            .strokeBorder(.black, lineWidth: 1.5)
-                            .frame(width: 25, height: 25)
-                            .contentShape(Circle())
+                }
+                
+                Text(task.title ?? "")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.black)
+                    .padding(.vertical, 10)
+                HStack(alignment: .bottom, spacing: 0){
+                    VStack(alignment: .leading, spacing: 10) {
+                        Label {
+                            Text(((task.deadline ?? Date()).formatted(date: .long, time: .omitted)))
+                        } icon: {
+                            Image(systemName: "calendar")
+                        }
+                        .font(.caption)
+                        
+                        Label {
+                            Text(((task.deadline ?? Date()).formatted(date: .omitted, time: .shortened)))
+                        } icon: {
+                            Image(systemName: "calendar")
+                        }
+                        .font(.caption)
+                    }.frame(maxWidth: .infinity, alignment: .leading)
+                    if !task.isCompleted && taskViewModel.currentTab != "Task Done"{
+                        Button {
+                            task.isCompleted.toggle()
+                            try? env.managedObjectContext.save()
+                        } label: {
+                            Circle()
+                                .strokeBorder(.black, lineWidth: 1.5)
+                                .frame(width: 25, height: 25)
+                                .contentShape(Circle())
+                        }
                     }
                 }
             }
-        }
-        .padding()
-        .frame(maxWidth: .infinity)
-        .background{
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color(task.color ?? "Yellow"))
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background{
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color(task.color ?? "Yellow"))
+            
+            
         }
     }
     
@@ -183,7 +200,7 @@ struct Home_Previews: PreviewProvider {
 }
 
 extension Date {
-
+    
     func toString(format: String = "yyyy-MM-dd") -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
@@ -197,7 +214,7 @@ extension Date {
         formatter.dateFormat = format
         return formatter.string(from: self)
     }
-   
+    
     func timeIn24HourFormat() -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
@@ -260,7 +277,7 @@ extension Date {
     func timeSinceDate(fromDate: Date) -> String {
         let earliest = self < fromDate ? self  : fromDate
         let latest = (earliest == self) ? fromDate : self
-    
+        
         let components:DateComponents = Calendar.current.dateComponents([.minute,.hour,.day,.weekOfYear,.month,.year,.second], from: earliest, to: latest)
         let year = components.year  ?? 0
         let month = components.month  ?? 0
@@ -276,9 +293,9 @@ extension Date {
         }else if (year >= 1){
             return "1 year ago"
         }else if (month >= 2) {
-             return "\(month) months ago"
+            return "\(month) months ago"
         }else if (month >= 1) {
-         return "1 month ago"
+            return "1 month ago"
         }else  if (week >= 2) {
             return "\(week) weeks ago"
         } else if (week >= 1){
@@ -286,7 +303,7 @@ extension Date {
         } else if (day >= 2) {
             return "\(day) days ago"
         } else if (day >= 1){
-           return "1 day ago"
+            return "1 day ago"
         } else if (hours >= 2) {
             return "\(hours) hours ago"
         } else if (hours >= 1){
@@ -302,4 +319,13 @@ extension Date {
         }
         
     }
+    var startOfDay: Date {
+        let components = Calendar.gregorian.dateComponents([.year, .month, .day], from: self)
+        return Calendar.gregorian.date(from: components) ?? self
+    }
+}
+
+extension Calendar {
+    static var gregorian = Calendar(identifier: .gregorian)
+    
 }
